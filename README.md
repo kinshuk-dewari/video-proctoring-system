@@ -14,7 +14,9 @@ npm i
 add `.env` file
 
 add the `mongodb` connection string in it
+```bash
 DATABASE_URL
+```
 
 ## 3. Run the project
 ```bash
