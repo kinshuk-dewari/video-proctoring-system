@@ -22,7 +22,7 @@ export default function RoomForm() {
 
   return (
     <form onSubmit={handleSubmit} className="bg-[#1C1C1E] p-8 rounded-4xl shadow-lg w-full max-w-sm mx-auto flex flex-col items-center">
-      <h2 className="text-white text-3xl font-bold mb-6">Join Room</h2>
+      <h2 className="text-white text-xl font-bold mb-6">Join Room</h2>
       <div className="w-full border-[#EDEDED]/20 border-1 rounded-md overflow-hidden mb-6">
         <input
           type="text"
