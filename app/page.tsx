@@ -1,7 +1,7 @@
 import Desc from "@/components/Desc";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer"
-import SVGBackground from "@/components/SVGBackground";
+import SVGBackground from "@/components/ui/SVGBackground";
 
 export default function Home() {
   return (
