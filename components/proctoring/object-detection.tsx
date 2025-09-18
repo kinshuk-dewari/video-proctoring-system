@@ -10,8 +10,8 @@ import "@tensorflow/tfjs-backend-cpu";
 import "@tensorflow/tfjs-backend-webgl";
 
 import { renderPredictions } from "@/lib/render-predictions";
-import { LoaderOne } from "./ui/loader";
-import { Button1 } from "./ui/Button";
+import { LoaderOne } from "../ui/loader";
+import { Button1 } from "../ui/Button";
 
 let detectInterval: ReturnType<typeof setInterval> | null = null;
 
