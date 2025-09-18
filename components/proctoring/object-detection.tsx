@@ -14,7 +14,7 @@ import { LoaderOne } from "../ui/loader";
 import { Button1 } from "../ui/Button";
 
 let detectInterval: ReturnType<typeof setInterval> | null = null;
-
+ 
 const ObjectDetection: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isCanvasVisible, setIsCanvasVisible] = useState(false);
@@ -84,7 +84,7 @@ const ObjectDetection: React.FC = () => {
     };
   }, [isCanvasVisible]);
 
-    // This function is for the button's onClick event
+  // This function is for the button's onClick event
   const handleToggle = () => {
     setIsCanvasVisible(prev => !prev);
   };
@@ -94,7 +94,7 @@ const ObjectDetection: React.FC = () => {
       {isLoading ? (
         <div className="flex items-center flex-col space-y-4 justify-center">
           <LoaderOne />
-          <p className="text-[#808080]"> Loading AI Model</p>
+          <p className="text-[#808080]">Loading coco-ssd Model</p>
         </div>
       ) : (
         <div className="w-full flex justify-center items-center flex-col space-y-4 max-w-7xl mx-auto">
@@ -103,7 +103,7 @@ const ObjectDetection: React.FC = () => {
               ref={webcamRef}
               className="rounded-md w-full lg:h-[480px]"
               muted
-              mirrored
+              // mirrored
               />          
             {/* Conditionally render the canvas */}
             {isCanvasVisible && (

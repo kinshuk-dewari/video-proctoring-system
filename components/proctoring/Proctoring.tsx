@@ -10,9 +10,12 @@ import "@tensorflow/tfjs-backend-cpu";
 
 import { isLookingAway } from "@/lib/proctoring-utils";
 import { renderPredictions } from "@/lib/render-predictions-blazing";
-
+import { createNamedLogger } from "@/lib/event-logger";
 
 let focusInterval: ReturnType<typeof setInterval> | null = null;
+
+// Create a logger instance
+const logEvent = createNamedLogger(3000);
 
 const Proctoring: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -48,16 +51,17 @@ const Proctoring: React.FC = () => {
     // Event logging
     const now = Date.now();
     if (predictions.length === 0 && now - lastFocusTime.current > 10000) {
-      console.log("[EVENT] No face detected > 10s");
+      logEvent("FocusDetection","No face detected > 10s");
+
       lastFocusTime.current = now;
     }
 
-    if (predictions.length > 1) console.log("[EVENT] Multiple faces detected");
+    if (predictions.length > 1) logEvent("FocusDetection","Multiple faces detected"); 
 
     if (predictions.length > 0) {
       const away = isLookingAway(predictions[0], webcamRef);
       if (away && now - lastFocusTime.current > 5000) {
-        console.log("[EVENT] Candidate looking away > 5s");
+        logEvent("FocusDetection","Candidate looking away > 5s");
         lastFocusTime.current = now;
       } else if (!away) {
         lastFocusTime.current = now;
