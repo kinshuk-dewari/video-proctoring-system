@@ -1,4 +1,5 @@
 "use client";
+import { Button1,Button2 } from '@/components/ui/Button';
 import { useState, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,39 +13,34 @@ export default function Home() {
     const url = `${window.location.origin}/room/${id}`;
     navigator.clipboard.writeText(url).catch(() => {});
   }
+  
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-xl w-full bg-white p-6 rounded shadow">
-        <h1 className="text-2xl font-bold mb-4">Video Proctoring — Interviewer</h1>
+    <div className="min-h-screen flex items-center justify-center ">
+      <div className="max-w-xl w-full p-6 rounded shadow">
+        <h1 className="text-2xl font-bold mb-4 text-[#808080]">Video Proctoring — Interviewer</h1>
         <div className="flex gap-2">
-          <button
-            onClick={() => createRoom()}
-            className="px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            Create random room
-          </button>
+          <Button1 onClick={() => createRoom()}>Create random room </Button1>
           <input
             ref={customInputRef}
             id="custom"
             placeholder="custom room id"
-            className="border p-2 rounded flex-1"
+            className="border-[#EDEDED]/20 border text-[#808080] p-2 rounded flex-1"
           />
-          <button
+          <Button2
             onClick={() => {
               const value = customInputRef.current?.value;
               createRoom(value);
             }}
-            className="px-3 py-2 bg-green-600 text-white rounded"
           >
             Create
-          </button>
+          </Button2>
         </div>
         {roomId && (
           <div className="mt-4">
-            Room: <span className="font-mono">{roomId}</span>
+            Room: <span className="text-2xl text-[#808080]">{roomId}</span>
             <div className="mt-2">
-              <a className="text-sm text-blue-700 underline" href={`/api/room/${roomId}`}>
+              <a className="text-xl text-[#808080] underline" href={`/api/room/${roomId}`}>
                 Open Room
               </a>
             </div>
