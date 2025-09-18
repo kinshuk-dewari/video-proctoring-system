@@ -18,7 +18,7 @@ export default function RoomForm() {
     setError("");
 
     // router.push(`/candidate/${encodeURIComponent(roomId.trim())}`);
-    router.push(`/candidate/${encodeURIComponent(roomId.trim())}+${encodeURIComponent(name.trim())}`);
+    router.push(`/room/${encodeURIComponent(roomId.trim())}?name=${encodeURIComponent(name.trim())}`);
   };
 
   return (

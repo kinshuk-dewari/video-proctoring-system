@@ -12,40 +12,41 @@ export default function Home() {
     setRoomId(id);
     const url = `${window.location.origin}/room/${id}`;
     navigator.clipboard.writeText(url).catch(() => {});
-  }
-  
+  }  
 
   return (
-    <div className="min-h-screen flex items-center justify-center ">
-      <div className="max-w-xl w-full p-6 rounded shadow">
-        <h1 className="text-2xl font-bold mb-4 text-[#808080]">Video Proctoring — Interviewer</h1>
-        <div className="flex gap-2">
-          <Button1 onClick={() => createRoom()}>Create random room </Button1>
+    <div className="p-6 flex flex-col items-center space-y-8 justify-center ">
+      <div className="rounded shadow">
+        <h1 className="text-7xl pt-28 font-bold text-[#D8D9D8]">Interviewer</h1>
+ 
+        <div className="flex gap-2 pt-12 flex-col">
           <input
             ref={customInputRef}
             id="custom"
             placeholder="custom room id"
-            className="border-[#EDEDED]/20 border text-[#808080] p-2 rounded flex-1"
+            className="border-[#EDEDED]/20 border text-[#808080] p-2 rounded-md flex-1"
           />
-          <Button2
+          <Button1
             onClick={() => {
               const value = customInputRef.current?.value;
               createRoom(value);
             }}
           >
-            Create
-          </Button2>
-        </div>
+            Create custom room
+          </Button1>
+          <Button2 onClick={() => createRoom()}>Create random room </Button2>
         {roomId && (
-          <div className="mt-4">
-            Room: <span className="text-2xl text-[#808080]">{roomId}</span>
+        <div className="mt-4 text-2xl text-center text-[#808080]">
+            Room: <span className=" text-[#808080]">{roomId}</span>
             <div className="mt-2">
-              <a className="text-xl text-[#808080] underline" href={`/api/room/${roomId}`}>
+              <a className="text-xl text-[#808080] underline" href={`/room/${roomId}`}>
                 Open Room
               </a>
+
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

@@ -20,7 +20,12 @@ let detectionInterval: ReturnType<typeof setInterval> | null = null;
 // Shared throttled logger
 const logEvent = createNamedLogger(3000);
 
-const FinalProctoring: React.FC = () => {
+interface FinalProctoringProps {
+  sessionId: string;
+  candidateName: string;
+}
+
+const FinalProctoring: React.FC<FinalProctoringProps> = ({ sessionId, candidateName }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCanvasVisible, setIsCanvasVisible] = useState(false);
 
