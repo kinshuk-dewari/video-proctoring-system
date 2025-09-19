@@ -1,12 +1,9 @@
-// app/api/events/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-
-    const { sessionId, type, metadata } = body;
+    const { sessionId, type, metadata } = await req.json();
 
     if (!sessionId || !type) {
       return NextResponse.json(
@@ -15,24 +12,21 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if session exists
+    // Make sure session exists
     const session = await prisma.interviewSession.findUnique({
       where: { id: sessionId },
     });
 
     if (!session) {
-      return NextResponse.json(
-        { error: "Interview session not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Session not found" }, { status: 404 });
     }
 
-    // Create event
+    // Create EventLog
     const event = await prisma.eventLog.create({
       data: {
         sessionId,
         type,
-        metadata: metadata || {},
+        metadata,
       },
     });
 

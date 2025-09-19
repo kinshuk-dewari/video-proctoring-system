@@ -1,52 +1,30 @@
-// import { NextResponse } from 'next/server';
-// import { v4 as uuidv4 } from 'uuid';
-
-// export async function POST(req: Request) {
-//   try {
-//     const body = await req.json().catch(() => ({}));
-//     const custom = typeof body?.roomId === 'string' && body.roomId.trim();
-//     const roomId = custom ? body.roomId.trim() : uuidv4().slice(0, 8);
-//     // optionally persist the room to DB here
-//     return NextResponse.json({ roomId }, { status: 201 });
-//   } catch (err) {
-//     return NextResponse.json({ error: 'failed' }, { status: 500 });
-//   }
-// }
-
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { NextResponse } from "next/server";
 
-export async function POST(request: Request, { params }: { params: { id: string }}) {
-  const roomId = params.id;
-  const body = await request.json().catch(() => ({}));
-  const { candidateName } = body;
+export async function POST(req: Request) {
+  try {
+    const { name, roomId } = await req.json();
 
-  if (!candidateName) return NextResponse.json({ error: "candidateName required" }, { status: 400 });
+    if (!name || !roomId) {
+      return NextResponse.json({ error: "Name and Room ID are required" }, { status: 400 });
+    }
 
-  // create or reuse candidate
-  let candidate = await prisma.candidate.findFirst({ where: { name: candidateName }});
-  if (!candidate) {
-    candidate = await prisma.candidate.create({ data: { name: candidateName }});
+    // Step 1: Create candidate
+    const candidate = await prisma.candidate.create({
+      data: { name },
+    });
+
+    // Step 2: Create interview session linked to candidate + roomId
+    const session = await prisma.interviewSession.create({
+      data: {
+        roomId,
+        candidateId: candidate.id,
+      },
+    });
+
+    return NextResponse.json({ candidate, session }, { status: 201 });
+  } catch (error: any) {
+    console.error("Error creating candidate/session:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
-
-  // create session
-  const session = await prisma.interviewSession.create({
-    data: {
-      roomId,
-      candidateId: candidate.id,
-    },
-  });
-
-  return NextResponse.json({ session });
 }
-
-export async function GET(request: Request, { params }: { params: { id: string }}) {
-  const roomId = params.id;
-  const session = await prisma.interviewSession.findUnique({
-    where: { roomId },
-    include: { events: true, candidate: true, videos: true },
-  });
-  if (!session) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json({ session });
-}
-

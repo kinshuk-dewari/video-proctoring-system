@@ -16,8 +16,8 @@ export default function Hero(){
         monitoring for focus, fairness, and exam integrity.
       </p>
       <div className="flex gap-4">
-        <Button1 onClick={() => router.push('/interviewer')}>Interviewer</Button1>
-        <Button2 onClick={() => router.push('/candidate')}>Candidate</Button2>
+        <Button1 onClick={() => router.push('/interviewer')}>Future Aspect</Button1>
+        <Button2 onClick={() => router.push('/candidate')}>Take Interview</Button2>
       </div>
     </section>
   );

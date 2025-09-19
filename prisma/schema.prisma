@@ -8,37 +8,38 @@ datasource db {
 }
 
 model Candidate {
-  id        String           @id @default(cuid())
+  id        String             @id @default(cuid())
   name      String
-  createdAt DateTime         @default(now())
+  createdAt DateTime           @default(now())
   sessions  InterviewSession[]
 }
 
 model InterviewSession {
-  id            String     @id @default(cuid())
-  roomId        String     @unique
-  candidateId   String
-  candidate     Candidate  @relation(fields: [candidateId], references: [id])
-  startedAt     DateTime   @default(now())
-  endedAt       DateTime?
-  events        EventLog[]
-  videos        Video[]
-  integrity     Int?       // computed at end
+  id          String     @id @default(cuid())
+  roomId      String     @unique
+  candidateId String
+  candidate   Candidate  @relation(fields: [candidateId], references: [id])
+  startedAt   DateTime   @default(now())
+  endedAt     DateTime?
+  events      EventLog[]
+  integrity   Int? // computed at end
+  report      Report? // 🔥 add reverse relation
 }
 
 model EventLog {
-  id           String    @id @default(cuid())
-  sessionId    String
-  session      InterviewSession @relation(fields: [sessionId], references: [id])
-  type         String    // e.g., "FACE_ABSENCE", "LOOK_AWAY", "MULTIPLE_FACES", "PHONE_DETECTED"
-  metadata     Json?
-  createdAt    DateTime  @default(now())
+  id        String           @id @default(cuid())
+  sessionId String
+  session   InterviewSession @relation(fields: [sessionId], references: [id])
+  type      String // e.g., "FACE_ABSENCE", "LOOK_AWAY", etc.
+  metadata  Json?
+  createdAt DateTime         @default(now())
 }
 
-model Video {
-  id         String   @id @default(cuid())
-  sessionId  String
-  session    InterviewSession @relation(fields: [sessionId], references: [id])
-  url        String
-  uploadedAt DateTime @default(now())
+model Report {
+  id          String           @id @default(cuid())
+  sessionId   String           @unique
+  session     InterviewSession @relation(fields: [sessionId], references: [id])
+  integrity   Int
+  generatedAt DateTime         @default(now())
+  details     Json
 }

@@ -1,22 +1,43 @@
-import throttle from "lodash/throttle";
+export function createNamedLogger(throttleMs: number = 3000) {
+  let lastLogTime: { [key: string]: number } = {};
 
-type LoggerFn = (msg: string) => void;
+  return async (
+    type: string,
+    message: string,
+    sessionId: string,
+    candidateName: string,
+    extraData: Record<string, any> = {}
+  ) => {
+    const now = Date.now();
 
-/**
- * Create a named, throttled logger.
- * Each call to createNamedLogger returns a function that logs
- * messages but will only actually print at most once per `limitMs`.
- */
-export const createNamedLogger = (limitMs = 3000): ((type: string, msg: string) => void) => {
-  const loggers = new Map<string, LoggerFn>();
+    // Throttle per type
+    if (lastLogTime[type] && now - lastLogTime[type] < throttleMs) return;
+    lastLogTime[type] = now;
 
-  return (type: string, msg: string) => {
-    if (!loggers.has(type)) {
-      const fn = throttle((m: string) => {
-        console.log(`[EVENT][${type}] ${m}`);
-      }, limitMs, { trailing: false });
-      loggers.set(type, fn);
+    console.log(`[${type}] ${message}`);
+
+    try {
+      const res = await fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          type,
+          metadata: {
+            message,
+            candidateName,
+            timestamp: new Date().toISOString(),
+            ...extraData,
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Failed to log event:", errData.error);
+      }
+    } catch (err) {
+      console.error("Failed to log event:", err);
     }
-    loggers.get(type)!(msg);
   };
-};
+}
