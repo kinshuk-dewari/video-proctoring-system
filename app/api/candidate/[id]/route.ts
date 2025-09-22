@@ -23,8 +23,12 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ candidate, session }, { status: 201 });
-  } catch (error: any) {
-    console.error("Error creating candidate/session:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error creating candidate/session:", error.message);
+    } else {
+      console.error("Unexpected error creating candidate/session:", error);
+    }
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

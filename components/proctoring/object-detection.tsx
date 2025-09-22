@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { load as cocoSSDLoad, ObjectDetection as CocoSSDModel } from "@tensorflow-models/coco-ssd";
-import * as tf from "@tensorflow/tfjs";
+// import * as tf from "@tensorflow/tfjs";
 
 // explicitly register backends
 import "@tensorflow/tfjs-backend-cpu";
@@ -14,7 +14,7 @@ import { LoaderOne } from "../ui/loader";
 import { Button1 } from "../ui/Button";
 
 let detectInterval: ReturnType<typeof setInterval> | null = null;
- 
+
 const ObjectDetection: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isCanvasVisible, setIsCanvasVisible] = useState(false);
@@ -22,27 +22,17 @@ const ObjectDetection: React.FC = () => {
   const webcamRef = useRef<Webcam | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  async function runCoco() {
+  const runCoco = useCallback(async () => {
     setIsLoading(true);
 
-    // // ensure tf backend is ready
-    // if (tf.getBackend() !== "webgl") {
-    //   try {
-    //     await tf.setBackend("webgl");
-    //   } catch {
-    //     await tf.setBackend("cpu");
-    //   }
-    // }
-    // await tf.ready();
-
-    // load coco-ssd model
     const net: CocoSSDModel = await cocoSSDLoad();
     setIsLoading(false);
 
     detectInterval = setInterval(() => {
       runObjectDetection(net).catch(console.error);
     }, 100);
-  }
+  }, []);
+
 
   async function runObjectDetection(net: CocoSSDModel) {
     if (
@@ -82,7 +72,7 @@ const ObjectDetection: React.FC = () => {
         clearInterval(detectInterval);
       }
     };
-  }, [isCanvasVisible]);
+  }, [isCanvasVisible,runCoco]);
 
   // This function is for the button's onClick event
   const handleToggle = () => {
@@ -103,8 +93,8 @@ const ObjectDetection: React.FC = () => {
               ref={webcamRef}
               className="rounded-md w-full lg:h-[480px]"
               muted
-              // mirrored
-              />          
+            // mirrored
+            />
             {/* Conditionally render the canvas */}
             {isCanvasVisible && (
               <canvas

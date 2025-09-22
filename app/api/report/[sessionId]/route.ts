@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET(
-  req: Request,
+  // req: Request,
   { params }: { params: { sessionId: string } }
 ) {
   const sessionId = params?.sessionId; // ✅ correctly await param
@@ -49,7 +49,7 @@ export async function GET(
       ["MULTIPLE_FACES", "ABSENCE", "PHONE_NOTES"].includes(e.type)
     );
 
-    let deductions = focusLostCount * 2 + suspiciousEvents.length * 5;
+    const deductions = focusLostCount * 2 + suspiciousEvents.length * 5;
     const integrityScore = Math.max(0, 100 - deductions);
 
     return NextResponse.json({

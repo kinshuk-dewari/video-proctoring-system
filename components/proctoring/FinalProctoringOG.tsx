@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import * as blazeface from "@tensorflow-models/blazeface";
 import { load as cocoSSDLoad, ObjectDetection as CocoSSDModel } from "@tensorflow-models/coco-ssd";
@@ -48,7 +48,7 @@ const FinalProctoringOG: React.FC<FinalProctoringProps> = ({ sessionId, candidat
   };
 
   // Focus and Object Detection
-  const runDetection = async () => {
+  const runDetection = useCallback(async () => {
     if (!webcamRef.current?.video || webcamRef.current.video.readyState !== 4 || !canvasRef.current) return;
 
     const video = webcamRef.current.video as HTMLVideoElement;
@@ -67,6 +67,7 @@ const FinalProctoringOG: React.FC<FinalProctoringProps> = ({ sessionId, candidat
       ]);
 
       // overlay for both detections
+      //@ts-expect-error: objects type from coco-ssd may not match ObjectPrediction interface
       if (isCanvasVisible) renderAllPredictions(faces, objects, ctx);
 
       // Focus Events 
@@ -78,8 +79,8 @@ const FinalProctoringOG: React.FC<FinalProctoringProps> = ({ sessionId, candidat
       }
 
       if (faces.length > 1) logEvent("FocusDetection", "Multiple faces detected", sessionId, candidateName);
-      if (faces.length > 0) {
-        const away = isLookingAway(faces[0], webcamRef as any);
+      if (faces.length > 0 && webcamRef.current?.video) {
+        const away = isLookingAway(faces[0], webcamRef);
         if (away && now - lastFocusTime.current > 5000) {
           logEvent("FocusDetection", "Candidate looking away > 5s", sessionId, candidateName);
           lastFocusTime.current = now;
@@ -89,20 +90,21 @@ const FinalProctoringOG: React.FC<FinalProctoringProps> = ({ sessionId, candidat
       }
 
       // Object Events 
-      objects.forEach(obj => {
+      objects.forEach((obj: { bbox: number[]; class: string; score: number }) => {
         if (["cell phone", "book", "laptop", "mouse", "remote", "keyboard"].includes(obj.class)) {
           logEvent("ObjectDetection", `${obj.class} detected`, sessionId, candidateName);
         }
       });
+
     }
-  };
+  },[isCanvasVisible, candidateName, sessionId]);
 
   useEffect(() => {
     loadModels().then(() => {
       detectionInterval = setInterval(runDetection, 500);
     });
     return () => { if (detectionInterval) clearInterval(detectionInterval); };
-  }, [isCanvasVisible]);
+  }, [isCanvasVisible,runDetection]);
 
   return (
     <div className="mt-8 w-full max-w-7xl mx-auto">
@@ -113,10 +115,10 @@ const FinalProctoringOG: React.FC<FinalProctoringProps> = ({ sessionId, candidat
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center space-y-4 w-full max-w-7xl">
-            <div className="flex text-xl text-[#808080] items-center justify-between gap-8">
-                <p>Session Id : {sessionId}</p>
-                <p>Candidate : {candidateName}</p>
-            </div>
+          <div className="flex text-xl text-[#808080] items-center justify-between gap-8">
+            <p>Session Id : {sessionId}</p>
+            <p>Candidate : {candidateName}</p>
+          </div>
           <div className="relative rounded-md">
             <Webcam ref={webcamRef} className="rounded-md w-full lg:h-[480px]" muted />
             {isCanvasVisible && (

@@ -7,7 +7,7 @@ interface EventLog {
   id: string;
   type: string;
   createdAt: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 // Report type
@@ -15,7 +15,7 @@ interface ReportInfo {
   id: string;
   integrity: number;
   generatedAt: string;
-  details: any;
+  details: Record<string, unknown>;
 }
 
 // Combined session + report type

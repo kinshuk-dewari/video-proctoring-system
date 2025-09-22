@@ -66,7 +66,7 @@
 // // }, 2000);
 
 // export default renderPredictions;
-import { createNamedLogger } from "./event-logger";
+// import { createNamedLogger } from "./event-logger";
 
 export interface Prediction {
   /** [x, y, width, height] */
@@ -74,11 +74,11 @@ export interface Prediction {
   /** class label from the model (e.g. "person", "book", etc.) */
   class: string;
   score?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Create a logger instance
-const logEvent = createNamedLogger(3000);
+// const logEvent = createNamedLogger(3000);
 
 // Classes we care about (ignore "person")
 const suspiciousItems = ["cell phone", "book", "laptop", "tv", "remote", "mouse", "keyboard"];
@@ -104,9 +104,9 @@ export const renderPredictions = (
     const isSuspicious = suspiciousItems.includes(label);
 
     // Only log if it's suspicious (NOT "person")
-    if (isSuspicious) {
-      logEvent("SuspiciousObject", `${label} Detected`);
-    }
+    // if (isSuspicious) {
+    //   logEvent("SuspiciousObject", `${label} Detected`);
+    // }
 
     // bounding box
     ctx.strokeStyle = isSuspicious ? "#FF0000" : "#00FFFF";

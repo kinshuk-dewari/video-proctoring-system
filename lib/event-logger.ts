@@ -1,12 +1,12 @@
 export function createNamedLogger(throttleMs: number = 3000) {
-  let lastLogTime: { [key: string]: number } = {};
+  const lastLogTime: { [key: string]: number } = {};
 
   return async (
     type: string,
     message: string,
     sessionId: string,
     candidateName: string,
-    extraData: Record<string, any> = {}
+    extraData: Record<string, unknown> = {}
   ) => {
     const now = Date.now();
 
